@@ -14,3 +14,4 @@ print(HP_pdfile.town)
 
 X = HP_pdfile[['town','area']].values
 print(X)
+
