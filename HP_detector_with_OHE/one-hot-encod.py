@@ -11,6 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 modelLe=LabelEncoder()     #creating object for data encoding 
 
 HP_pdfile.town = modelLe.fit_transform(HP_pdfile.town)    #automaticall encoding the data to numbers instead of names  on town data 
+print("encoded town data")
 print(HP_pdfile.town)
 
 #N ow we want to remove price ,,but we will use a method that is going to extract all data except price unlike with dummies method which uses drop method

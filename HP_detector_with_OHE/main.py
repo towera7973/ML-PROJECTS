@@ -1,5 +1,6 @@
 import pandas as pd # Imports the pandas library for data manipulation.
-HP_pdfile=pd.read_csv("homeprices.csv") #Reads the "homeprices.csv" file into a pandas DataFrame.
+HP_pdfile=pd.read_csv("HP_detector_with_OHE/homeprices.csv") # into a pandas DataFrame.
+
 print(HP_pdfile) # Displays the initial DataFrame.
 Dummies =pd.get_dummies(HP_pdfile.town).astype(int) # Creates dummy variables for the 'town' column. astype(int) converts the boolean (True/False) values to integers (1/0).
 print(Dummies) # Displays the dummy variable DataFrame.
