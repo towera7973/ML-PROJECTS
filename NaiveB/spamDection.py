@@ -8,14 +8,14 @@ from sklearn.metrics import accuracy_score
 # Assuming the dataset has 'label' and 'message' columns
 data = pd.read_csv('spam.csv', encoding='latin-1')
 data = data[['v1', 'v2']]
-data.columns = ['label', 'message']
+data.columns = ['Category', 'message']
 
 # Encode labels: 'spam' -> 1, 'ham' -> 0
-data['label'] = data['label'].map({'ham': 0, 'spam': 1})
+data['Category'] = data['Category'].map({'ham': 0, 'spam': 1})
 
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(
-    data['message'], data['label'], test_size=0.2, random_state=42
+    data['message'], data['category'], test_size=0.2, random_state=42
 )
 
 # Convert text data to feature vectors
