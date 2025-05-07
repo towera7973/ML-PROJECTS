@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 
 # Load dataset (replace 'spam.csv' with your dataset path)
 # Assuming the dataset has 'label' and 'message' columns
-data = pd.read_csv('spam.csv', encoding='latin-1')
+data = pd.read_csv("NaiveB/spam.csv", encoding='latin-1')
 data = data[['v1', 'v2']]
 data.columns = ['Category', 'message']
 
