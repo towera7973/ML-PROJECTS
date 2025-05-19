@@ -1,0 +1,19 @@
+L1 regularization uses sklearn.linear_model import lasso and adds theata value 
+l2 uses sklearn Ridge from  sklearn.linear_model...
+thats how l1 and l2 are used 
+
+from sklearn import linear_model
+lasso_reg = linear_model.Lasso(alpha=50, max_iter=100, tol=0.1)
+lasso_reg.fit(train_X, train_y)
+
+Lasso(alpha=50, max_iter=100, tol=0.1)
+
+
+
+0.6827792395792723
+
+
+or 
+from sklearn.linear_model import Ridge
+ridge_reg= Ridge(alpha=50, max_iter=100, tol=0.1)
+ridge_reg.fit(train_X, train_y)
