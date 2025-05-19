@@ -5,19 +5,16 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 import numpy as np
+import pandas as pd
 # Load the digits dataset
 digits=load_digits()
 print(digits)
 print(digits.data)  
-print("numbers to be outputs after prediction")
-print(digits.target)
-print("images in pixel form")
-print(digits.images[0])
-print(digits.feature_names)
-print("images in pixel form")
-print(digits.images[0])
-print(digits.images)
-
+#printing all attributes of the dataset 
+print(dir((digits)))
+dig = pd.DataFrame(digits.data,digits.target)
+dig["target_number"]=digits.target
+print(dig)
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.2, random_state=42)
 # Create a KNN classifier
