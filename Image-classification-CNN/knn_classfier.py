@@ -26,8 +26,7 @@ score=knn.score(X_test,y_test)
 
 print("score of the model is ",score)
 #plotting confussion metrix
-confM= confusion_matrix(y_test,y_pred)  
-print(confM)
+confM= confusion_matri
 #plotting confussion matrix with heatmap
 
 plt.xlabel("ypredicte")
