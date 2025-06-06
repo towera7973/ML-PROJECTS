@@ -90,3 +90,33 @@ Data_6 = Data_5[~(Data_5.total_sqft / Data_5.Bedrooms<400)]
 print('---------------------------------------------------------------------------------')
 print(Data_6)
 print(Data_6.shape)
+
+#dropping prices that are outside normal range above or bellow mean in a group of each location 
+def outlier_price_removal(Data_n):
+    Empty_df =pd.DataFrame()
+    for key , subgroup in Data_n.groupby("location"):
+       meanx=np.mean(subgroup.price_per_sqft)
+       stdx=np.std(subgroup.price_per_sqft)
+       right_price_group=subgroup[(subgroup.price_per_sqft >= (meanx-stdx)) & (subgroup.price_per_sqft <= (meanx+stdx))]
+       Empty_df= pd.concat([Empty_df ,right_price_group], ignore_index=True)
+    return Empty_df
+Data_7= outlier_price_removal(Data_6)
+print('--------------------------------New Data-------------------------------------------------')
+print(Data_7.shape)
+
+#Now we need to remove outliers of locations that has unrealistic prices per square feet based on number of room
+#house with 3 bedrooms should not have price per square feet more than the one with 2 or 1 bedroom
+#we need to put these in an outlier box
+
+def remove_bedrom_outlier():
+    exclude_indices = np.array([])
+    for location_name, location_data in Data_7.groupby("location"):
+       loc_Bedroom_stats = {}  #Dictionary to hold statistics for  number of bedrooms in a unique location
+       for bedroom_num , bedroom_data in location_name.groupby("Bedrooms"):
+           loc_Bedroom_stats[bedroom_num]={
+               'mean': np.mean(bedroom_data.price_per_sqft),
+                'std': np.std(bedroom_data.price_per_sqft),
+                'count': bedroom_data.shape[0]
+           }
+          
+
