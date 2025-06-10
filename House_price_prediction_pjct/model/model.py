@@ -108,15 +108,42 @@ print(Data_7.shape)
 #house with 3 bedrooms should not have price per square feet more than the one with 2 or 1 bedroom
 #we need to put these in an outlier box
 
-def remove_bedrom_outlier():
+def remove_bedroom_outlier(data_x):
     exclude_indices = np.array([])
     for location_name, location_data in Data_7.groupby("location"):
        loc_Bedroom_stats = {}  #Dictionary to hold statistics for  number of bedrooms in a unique location
-       for bedroom_num , bedroom_data in location_name.groupby("Bedrooms"):
-           loc_Bedroom_stats[bedroom_num]={
-               'mean': np.mean(bedroom_data.price_per_sqft),
-                'std': np.std(bedroom_data.price_per_sqft),
-                'count': bedroom_data.shape[0]
-           }
-          
+       for bedroom_num ,bedroom_data in location_data.groupby("Bedrooms"):
+        loc_Bedroom_stats[bedroom_num]={
+             'mean': np.mean(bedroom_data.price_per_sqft),
+             'std': np.std(bedroom_data.price_per_sqft),
+             'count': bedroom_data.shape[0]
+               }
+        #once all the stats for a specific location has been retrived we can now compare the prices per square feet of each bedroom with the next one
+        ##using the mean and std of the next bedroom    
+       for bedroom_num , bedroom_data in location_data.groupby('Bedrooms'):
+           #get stats for previous number of bedrooms 
+           if bedroom_num > 1:
+               prev_bedroom_stats =loc_Bedroom_stats.get(bedroom_num - 1, None)
+               #now compare the current bedroom stats with the previous one and put the outllier  in an array
+               if prev_bedroom_stats and prev_bedroom_stats['count'] > 5:
+                   #if the current bedroom price per square feet is more than the previous one then we put it in an outlier bo
+                exclude_indices = np.append(exclude_indices, bedroom_data[bedroom_data.price_per_sqft < prev_bedroom_stats['mean']].index.values)
+        #now we can drop the index number in the array because we dont want the index number to be in the final dataframe
+    return Data_7.drop(exclude_indices, axis='index').reset_index(drop=True)
+Data_8= remove_bedroom_outlier(Data_7)
+print('--------------------------------New Data after removing bedroom outliers---------------------------------')
+print(Data_8.shape)
+#if number of bathrooms is greater than bedrooms plus 1 then that is an outlier
+Data_9= Data_8[Data_8.bath < Data_8.Bedrooms + 1]
+print('--------------------------------New Data after removing bathroom outliers---------------------------------')
+print(Data_9.shape)
+#now we need to drop out data on columns that we dont need anymore
+Data_10 =Data_9.drop(['price_per_sqft', 'price'],  axis='columns')
+print('--------------------------------New Data after dropping price_per_sqft and price columns---------------------------------')
+print(Data_10)
 
+#Now all data cleaning and preparation is done.For training we need to convert all data to numerical values
+#therefore we need to convert the location column to numerical values using  One Hot Encoding For Location
+
+Dummies = pd.get_dummies(Data_10.location)
+print(Dummies.head(10))
