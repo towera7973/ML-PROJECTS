@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression 
+from sklearn.model_selection import train_test_split, ShuffleSplit, GridSearchCV, cross_val_score
+from sklearn.linear_model import LinearRegression, Lasso 
+from sklearn.tree import DecisionTreeRegressor
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 
 Dt1=pd.read_csv("House_price_prediction_pjct/model/bengaluru_house_prices.csv")
 Data_1=pd.DataFrame(Dt1)
@@ -154,14 +157,14 @@ print(Data_11.head(3))
 Data_12 = Data_11.drop(['location'], axis='columns')
 print(Data_12.head(3))
 #Now building the model
-x=Data_12
+X=Data_12
 # since the price is in Data_9 dataframe we can get the price column from there .y will be the target variable
 y=Data_9['price']
-print(x.head(10))
+print(X.head(10))
 print(y.head(10))
 
 #splitting the data into training and testing data
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 print('--------------------------------Training Data---------------------------------')
 print(x_train.shape, y_train.shape)
 #training the model with LinearRegression
@@ -171,15 +174,52 @@ test_score=trained_data.score(x_test, y_test)
 print('--------------------------------Test Score---------------------------------')
 print(test_score)
 
-# now using k ford validation to measure accuracy the Regression mODEL above 
-from sklearn.model_selection import ShuffleSplit
-from sklearn.model_selection import cross_val_score
+# now using k ford validation to measure accuracy the Regression mODEL above
 
 Cv =ShuffleSplit(n_splits=5 ,test_size=0.2, random_state=0)
-cross_score=cross_val_score(LinearRegression(), x, y, cv=Cv)
+cross_score=cross_val_score(LinearRegression(), X, y, cv=Cv)
 print('--------------------------------Cross Validation Score---------------------------------')
 print(cross_score)
 #--------------------------------Cross Validation Score---------------------------------
 #[0.83558942 0.75771822 0.89039052 0.78170028 0.80729098]
 #these are so far good scores abobe 75 but for accurate prediction we can use other ML models by using 
 #GridSearchCV to find the best parameters for the model
+def find_best_model(X,y):
+    Models={
+         'LinearRegression': {
+            'actual_model': LinearRegression(),
+            'params': {
+                'fit_intercept': [True, False]
+            }
+         },
+        'Lasso':{
+            'actual_model': Lasso(),
+            'params':{
+                 'alpha': [1,2],
+                'selection': ['random', 'cyclic']
+        
+            }   },
+        'decision_tree': {
+            'actual_model': DecisionTreeRegressor(),
+            'params': {
+                'criterion': ['squared_error', 'friedman_mse', 'absolute_error'],
+                'splitter': ['best', 'random']
+            }
+            }
+    }
+    scores= []
+    CV= ShuffleSplit(n_splits=5, test_size=0.2 , random_state=0)    
+    for model_name , data in Models.items():
+        print(f'Finding best parameters for {model_name}...')
+        grid_object=GridSearchCV(data['actual_model'], data['params'], cv=CV, return_train_score=False)
+        grid_object.fit(X, y)
+        scores.append({
+            'model_name': model_name,
+            'best_score': grid_object.best_score_,
+            'best_params': grid_object.best_params_
+        })
+    return pd.DataFrame(scores, columns=['model_name', 'best_score', 'best_params'])
+
+object1=find_best_model(X,y)
+print('--------------------------------Best Model---------------------------------')
+print(object1)
