@@ -160,6 +160,7 @@ print(Data_12.head(3))
 X=Data_12
 # since the price is in Data_9 dataframe we can get the price column from there .y will be the target variable
 y=Data_9['price']
+print('--------------------------------X and y Data---------------------------------')
 print(X.head(10))
 print(y.head(10))
 
@@ -196,13 +197,13 @@ def find_best_model(X,y):
             'actual_model': Lasso(),
             'params':{
                  'alpha': [1,2],
-                'selection': ['random', 'cyclic']
+                'selection': ['random']
         
             }   },
         'decision_tree': {
             'actual_model': DecisionTreeRegressor(),
             'params': {
-                'criterion': ['squared_error', 'friedman_mse', 'absolute_error'],
+                'criterion': ['squared_error'],
                 'splitter': ['best', 'random']
             }
             }
@@ -212,6 +213,8 @@ def find_best_model(X,y):
     for model_name , data in Models.items():
         print(f'Finding best parameters for {model_name}...')
         grid_object=GridSearchCV(data['actual_model'], data['params'], cv=CV, return_train_score=False)
+        verbose = 2
+        n_jobs=-1
         grid_object.fit(X, y)
         scores.append({
             'model_name': model_name,
@@ -223,3 +226,26 @@ def find_best_model(X,y):
 object1=find_best_model(X,y)
 print('--------------------------------Best Model---------------------------------')
 print(object1)
+
+# from the 3 models above we can see that the Linear Regression model has the best score of 0.81 therefore we will 
+#choose linear regression model for our final model
+#function to test the model now with random properties
+def price_prediction( location, total_sqft,bath ,Bedrooms):
+    Location_index=np.where(X.columns==location)[0][0]
+    print(f'Location index for {location} is {Location_index}')
+    x=np.zeros(len(X.columns))
+    x[0]=total_sqft
+    x[1]=bath
+    x[2]=Bedrooms
+
+    if Location_index >= 0:
+        x[Location_index]=1 #activating the location with 1 and all other locations index means have 0
+    else:
+        print(f'Location {location} not found in the dataset.')
+        return None
+    #this means x would now look something like: [1000.,3., 2., 0., 1.,0, 0, ..........0, 0.]
+    #using Linear regression model to predict the price now
+    return LR_object.predict([x])[0]
+# Example usage of the price_prediction function
+print('--------------------------------Price Prediction---------------------------------')
+price_prediction('1st Phase JP Nagar',1000, 3, 2)
