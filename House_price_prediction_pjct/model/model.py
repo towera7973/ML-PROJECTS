@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression 
-from sklearn.model_selection import cross_val_score
-
 
 Dt1=pd.read_csv("House_price_prediction_pjct/model/bengaluru_house_prices.csv")
 Data_1=pd.DataFrame(Dt1)
@@ -168,4 +166,20 @@ print('--------------------------------Training Data----------------------------
 print(x_train.shape, y_train.shape)
 #training the model with LinearRegression
 LR_object=LinearRegression()
-LR_object.fit(x_train,y_train)
+trained_data=LR_object.fit(x_train,y_train)
+test_score=trained_data.score(x_test, y_test)
+print('--------------------------------Test Score---------------------------------')
+print(test_score)
+
+# now using k ford validation to measure accuracy the Regression mODEL above 
+from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import cross_val_score
+
+Cv =ShuffleSplit(n_splits=5 ,test_size=0.2, random_state=0)
+cross_score=cross_val_score(LinearRegression(), x, y, cv=Cv)
+print('--------------------------------Cross Validation Score---------------------------------')
+print(cross_score)
+#--------------------------------Cross Validation Score---------------------------------
+#[0.83558942 0.75771822 0.89039052 0.78170028 0.80729098]
+#these are so far good scores abobe 75 but for accurate prediction we can use other ML models by using 
+#GridSearchCV to find the best parameters for the model
