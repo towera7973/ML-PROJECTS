@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression 
+from sklearn.model_selection import cross_val_score
 
 
 Dt1=pd.read_csv("House_price_prediction_pjct/model/bengaluru_house_prices.csv")
@@ -145,5 +147,25 @@ print(Data_10)
 #Now all data cleaning and preparation is done.For training we need to convert all data to numerical values
 #therefore we need to convert the location column to numerical values using  One Hot Encoding For Location
 
-Dummies = pd.get_dummies(Data_10.location)
+Dummies = pd.get_dummies(Data_10.location).astype(int)
 print(Dummies.head(10))
+Data_11=pd.concat([Data_10,Dummies], axis='columns')
+print('--------------------------------New Data after One Hot Encoding for Location---------------------------------')
+print(Data_11.head(3))
+#now we can drop the location column
+Data_12 = Data_11.drop(['location'], axis='columns')
+print(Data_12.head(3))
+#Now building the model
+x=Data_12
+# since the price is in Data_9 dataframe we can get the price column from there .y will be the target variable
+y=Data_9['price']
+print(x.head(10))
+print(y.head(10))
+
+#splitting the data into training and testing data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+print('--------------------------------Training Data---------------------------------')
+print(x_train.shape, y_train.shape)
+#training the model with LinearRegression
+LR_object=LinearRegression()
+LR_object.fit(x_train,y_train)
