@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split, ShuffleSplit, GridSearchCV, cross_val_score
 from sklearn.linear_model import LinearRegression, Lasso 
 from sklearn.tree import DecisionTreeRegressor
+import pickle
+import json
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 
@@ -230,22 +232,57 @@ print(object1)
 # from the 3 models above we can see that the Linear Regression model has the best score of 0.81 therefore we will 
 #choose linear regression model for our final model
 #function to test the model now with random properties
-def price_prediction( location, total_sqft,bath ,Bedrooms):
-    Location_index=np.where(X.columns==location)[0][0]
-    print(f'Location index for {location} is {Location_index}')
-    x=np.zeros(len(X.columns))
-    x[0]=total_sqft
-    x[1]=bath
-    x[2]=Bedrooms
 
-    if Location_index >= 0:
-        x[Location_index]=1 #activating the location with 1 and all other locations index means have 0
+def price_prediction(location, total_sqft, bath, Bedrooms_bhk):
+   
+    # Get the complete list of column names (feature names) from your original X DataFrame (Data_12)
+    feature_columns = X.columns.tolist()
+    print(feature_columns)
+    # Create a DataFrame for a single input sample, initialized with zeros
+    # This ensures that all columns are present, and their names are correct.
+    single_house_input = pd.DataFrame(0, index=[0], columns=feature_columns)
+
+    # Populate the numerical features based on their column names This is more robust than relying on hardcoded numerical indices (0, 1, 2)
+    # because it doesn't break if column order changes.
+    single_house_input['total_sqft'] = total_sqft
+    single_house_input['bath'] = bath
+    single_house_input['Bedrooms'] = Bedrooms_bhk 
+
+    # Handle the one-hot encoded 'location' feature
+    if location in feature_columns:
+        single_house_input[location] = 1
     else:
-        print(f'Location {location} not found in the dataset.')
-        return None
-    #this means x would now look something like: [1000.,3., 2., 0., 1.,0, 0, ..........0, 0.]
-    #using Linear regression model to predict the price now
-    return LR_object.predict([x])[0]
+        # If the specific location is not found, check if 'Others' column exists
+        # and assign it to 'Others' as per your data cleaning logic.
+        if 'Others' in feature_columns:
+            single_house_input['Others'] = 1
+            print(f"Warning: Location '{location}' not found in training data. Using 'Others' for prediction.")
+        else:
+            # If the location is completely new and 'Others' category doesn't exist,
+            # this might be an issue. You could raise an error or log it.
+            print(f"Error: Location '{location}' not found in training data and 'Others' category not available. Cannot predict.")
+            return None # Or raise ValueError("...")
+    # Make the prediction using the trained model.
+    # Passing a DataFrame ensures the model receives valid feature names, which will eliminate the UserWarning.
+    # Also, use 'trained_data' which is your fitted model, not 'LR_object' (the unfitted regressor)
+    return trained_data.predict(single_house_input)[0]
+    
 # Example usage of the price_prediction function
-print('--------------------------------Price Prediction---------------------------------')
-price_prediction('1st Phase JP Nagar',1000, 3, 2)
+predicted_price = price_prediction('1st Phase JP Nagar', 2000, 5, 4) # Call with new variable name for Bedrooms
+if predicted_price is not None:
+    print('--------------------------------Price Prediction---------------------------------')
+    print(f"Predicted price for 1st Phase JP Nagar, 2000 sqft, 5 bath, 4 bhk: {predicted_price:.2f} dollars")
+
+predicted2_price = price_prediction('Indira Nagar',1000, 4, 2) # Call with new variable name for Bedrooms
+if predicted2_price is not None:
+    print(f"Predicted price for indira Nagar, 1000 sqft, 4 bath, 2 bhk: {predicted2_price:.2f} dollars")
+# now using pickle tp save the model
+with open("House_price_prediction_pjct/model/house_price_model.pkl", "wb") as file:
+    pickle.dump(trained_data, file)
+
+#now exporting  data columns X.columns to a json file 
+columns_data={
+    'data_columns': [j.lower() for j in X.columns]
+}
+with open('House_price_prediction_pjct/model/columns_data.json', 'w') as file:
+    file.write(json.dumps(columns_data))
