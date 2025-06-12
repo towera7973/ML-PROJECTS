@@ -1,0 +1,1 @@
+this folder is just a copy of column data and house_price_model
