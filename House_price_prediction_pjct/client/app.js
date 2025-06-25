@@ -35,8 +35,8 @@ function onClickedEstimatePrice() {
       bath: bathrooms,
       location: location.value
   },function(data, status) {
-      console.log(data.estimated_price);
-      estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " kwacha</h2>";
+      console.log(data.predited_price);
+      estPrice.innerHTML = "<h2>" + data.predited_price.toString() + " kwacha</h2>";
       console.log(status);
   });
 }
