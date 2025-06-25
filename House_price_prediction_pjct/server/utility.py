@@ -55,4 +55,4 @@ def get_predicted_price(location, bhk, bath, sqft):
 if __name__== "__main__":
     load_data_model()
     get_locations_data()
-    print(get_predicted_price("New York", 3 ,3,1500))
+    print(get_predicted_price("BT", 4 ,3,1100))
