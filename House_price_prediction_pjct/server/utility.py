@@ -22,6 +22,8 @@ def load_data_model():
         __columns_data = json.load(f)['data_columns']
         print("Columns data loaded successfully.")
         __locations=__columns_data[3:]
+        print(__locations)
+
     with open(model_file_path, 'rb') as f:
         __model = pickle.load(f)
     print("Data and model loaded successfully.")
@@ -51,8 +53,8 @@ def get_predicted_price(location, bhk, bath, sqft):
     predicted_price = __model.predict([x])[0]
     print("Price predicted successfully.")
     return round(predicted_price, 2)
-
+load_data_model()
 if __name__== "__main__":
-    load_data_model()
+    
     get_locations_data()
     print(get_predicted_price("BT", 4 ,3,1100))
