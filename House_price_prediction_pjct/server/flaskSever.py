@@ -20,10 +20,9 @@ def predict_home_price():
     location = request.form["location"]
     total_sqft= float(request.form["total_sqft"])
     bath= int(request.form["bath"])
-    bedroom=int( request.form["bedroom"])
-
+    bedrooms=int( request.form["bedrooms"])
     response =jsonify(
-        { "predicted_price": utility.get_predicted_price(location, total_sqft, bath, bedroom) }
+        { "predicted_price": utility.get_predicted_price(location, total_sqft, bath, bedrooms) }
     )
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
