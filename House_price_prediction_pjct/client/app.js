@@ -9,9 +9,9 @@ function getBathValue() {
 }
 
 function getBedroomsValue() {
-  var uiBHK = document.getElementsByName("uiBHK");
-  for(var i in uiBHK) {
-    if(uiBHK[i].checked) {
+  var bd = document.getElementsByName("uiBEDR");
+  for(var i in bd) {
+    if(bd[i].checked) {
         return parseInt(i)+1;
     }
   }
@@ -19,15 +19,15 @@ function getBedroomsValue() {
 }
 
 function onClickedEstimatePrice() {
-  console.log("Estimate price button clicked");
+  console.log("predicted price button clicked");
   var sqft = document.getElementById("uiSqft");
   var bedrooms= getBedroomsValue();
   var bathrooms = getBathValue();
   var location = document.getElementById("uiLocations");
   var estPrice = document.getElementById("uiEstimatedPrice");
 
-  var url = "https://shiny-carnival-j7qp574wpr525gj7-8000.app.github.dev/predict_home_price"; //Use this if you are NOT using nginx which is first 7 tutorials
-  //var url = "/api/predict_home_price"; // Use this if  you are using nginx. i.e tutorial 8 and onwards
+  var url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev/predict_home_price"; //Use this if you are NOT using nginx
+  //var url = "/api/predict_home_price"; // Use this if  you are using nginx
 
   $.post(url, {
       total_sqft: parseFloat(sqft.value),
@@ -35,15 +35,15 @@ function onClickedEstimatePrice() {
       bath: bathrooms,
       location: location.value
   },function(data, status) {
-      console.log(data.estimated_price);
-      estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " kwacha</h2>";
+      console.log(data.predicted_price);
+      estPrice.innerHTML = "<h2>" + data.predicted_price.toString() + " kwacha</h2>";
       console.log(status);
   });
 }
 
 function onPageLoad() {
   console.log( "document loaded" );
-  var url = "https://shiny-carnival-j7qp574wpr525gj7-8000.app.github.dev/predict_home_price";// Use this if you are NOT using nginx which is first 7 tutorials
+  var url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev/get_loc_data";// Use this if you are NOT using nginx which is first 7 tutorials
   
   $.get(url,function(data, status) {
       console.log("got response for get_location_names request");
