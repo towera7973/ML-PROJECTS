@@ -34,7 +34,7 @@ function onClickedEstimatePrice() {
     let estPrice = document.getElementById("uiEstimatedPrice");
 
     // IMPORTANT: Ensure this URL is correct for your deployed Shiny-Carnival app
-    let url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev/predict_home_price";
+    let url = "https://shiny-carnival-j7qp574wpr525gj7.github.dev/predict_home_price";
 
     $.post(url, {
         total_sqft: parseFloat(sqft.value),
@@ -68,7 +68,7 @@ function onPageLoad() {
     console.log("document loaded: fetching locations...");
 
     // IMPORTANT: Ensure this URL is correct for your deployed Shiny-Carnival app
-    let url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev/get_loc_data";
+    let url = "https://shiny-carnival-j7qp574wpr525gj7.github.dev/get_loc_data";
 
     $.get(url, function(data, status) {
         console.log("Got response for get_location_names request");
