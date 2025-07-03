@@ -2,11 +2,11 @@ function getBathValue() {
     let uiBathrooms = document.getElementsByName("uiBathrooms");
     for (let i in uiBathrooms) {
         if (uiBathrooms[i].checked) {
-            // CORRECTED: Get the actual 'value' attribute of the checked radio button
+            // Get the actual 'value' attribute of the checked radio button
             return parseInt(uiBathrooms[i].value);
         }
     }
-    // Consider returning a default value (e.g., 2) or handling this case specifically
+
     return -1; // Invalid Value if no bathroom is selected
 }
 
@@ -19,7 +19,7 @@ function getBedroomsValue() {
             return parseInt(bd[i].value);
         }
     }
-    // Consider returning a default value (e.g., 2) or handling this case specifically
+    
     return -1; // Invalid Value if no bedroom is selected
 }
 
@@ -34,7 +34,7 @@ function onClickedEstimatePrice() {
     let estPrice = document.getElementById("uiEstimatedPrice");
 
     // IMPORTANT: Ensure this URL is correct for your deployed Shiny-Carnival app
-    let url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev/predict_home_price";
+    let url = "/predict_home_price";
 
     $.post(url, {
         total_sqft: parseFloat(sqft.value),
@@ -68,7 +68,7 @@ function onPageLoad() {
     console.log("document loaded: fetching locations...");
 
     // IMPORTANT: Ensure this URL is correct for your deployed Shiny-Carnival app
-    let url = "https://shiny-carnival-j7qp574wpr525gj7-5000.app.github.dev//get_loc_data";
+    let url = "/get_loc_data";
 
     $.get(url, function(data, status) {
         console.log("Got response for get_location_names request");
